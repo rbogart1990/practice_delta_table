@@ -56,6 +56,7 @@ schema = StructType([
 delta_table_path = "/tmp/delta-table"
 
 
+LOG.info("Create Spark DataFrame and save as Delta Table")
 # Generate data
 LOG.info("Generating data...")
 today = datetime.now()
@@ -83,7 +84,7 @@ df = spark.read.format("delta").load(delta_table_path)
 df.show()
 
 
-# Overwrite original Delta table with new data
+LOG.info("Overwrite original Delta table with new data")
 new_data = generate_data(start_id=6, end_id=10)
 
 # Create DataFrame
