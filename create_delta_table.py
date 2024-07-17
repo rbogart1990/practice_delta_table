@@ -1,12 +1,12 @@
+from datetime import datetime, timedelta
+from decimal import Decimal
+from delta import *
 import logging
 import os
 import pyspark
-from delta import *
-from datetime import datetime, timedelta
-import random
-from decimal import Decimal
-from typing import List, Tuple
 from pyspark.sql.types import StructType, StructField, IntegerType, DateType, DecimalType
+import random
+from typing import List, Tuple
 
 def generate_data(start_id: int, end_id: int) -> List[Tuple[int, datetime.date, Decimal]]:
     """
