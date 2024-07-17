@@ -5,7 +5,29 @@ from delta import *
 from datetime import datetime, timedelta
 import random
 from decimal import Decimal
+from typing import List, Tuple
 from pyspark.sql.types import StructType, StructField, IntegerType, DateType, DecimalType
+
+def generate_data(start_id: int, end_id: int) -> List[Tuple[int, datetime.date, Decimal]]:
+    """
+    Generate sample data with IDs ranging from start_id to end_id.
+
+    Args:
+        start_id (int): The starting ID for the range.
+        end_id (int): The ending ID for the range.
+
+    Returns:
+        List[Tuple[int, datetime.date, Decimal]]: A list of tuples containing the generated data.
+            Each tuple consists of (id, transaction_date, amount).
+    """
+    today = datetime.now()
+    data = []
+    for i in range(start_id, end_id + 1):
+        id = i
+        transaction_date = today - timedelta(days=random.randint(0, 365))
+        amount = Decimal(round(random.uniform(10.0, 1000.0), 2))
+        data.append((id, transaction_date, amount))
+    return data
 
 # Set up logging
 logging.basicConfig(
@@ -30,20 +52,16 @@ schema = StructType([
     StructField("amount", DecimalType(10, 2), False)
 ])
 
+
 # Generate data
 LOG.info("Generating data...")
 today = datetime.now()
 data = []
 
-for i in range(1, 6):
-    id = i
-    transaction_date = today - timedelta(days=random.randint(0, 365))
-    amount = Decimal(round(random.uniform(10.0, 1000.0), 2))
-    data.append((id, transaction_date, amount))
+data = generate_data(start_id=1, end_id=5)
 
 # Create DataFrame
 df = spark.createDataFrame(data, schema=schema)
-df.show()
 
 # Path to save the Delta table
 delta_table_path = "/tmp/delta-table"
