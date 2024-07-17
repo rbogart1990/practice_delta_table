@@ -52,6 +52,9 @@ schema = StructType([
     StructField("amount", DecimalType(10, 2), False)
 ])
 
+# Path to save the Delta table
+delta_table_path = "/tmp/delta-table"
+
 
 # Generate data
 LOG.info("Generating data...")
@@ -62,9 +65,6 @@ data = generate_data(start_id=1, end_id=5)
 
 # Create DataFrame
 df = spark.createDataFrame(data, schema=schema)
-
-# Path to save the Delta table
-delta_table_path = "/tmp/delta-table"
 
 # Remove existing Delta table if it exists
 if os.path.exists(delta_table_path):
@@ -79,7 +79,7 @@ df.write.format("delta").mode("overwrite").save(delta_table_path)
 
 # Read the Delta table and show the records
 LOG.info("Reading and displaying the Delta table...")
-df = spark.read.format("delta").load("/tmp/delta-table")
+df = spark.read.format("delta").load(delta_table_path)
 df.show()
 
 
@@ -88,9 +88,6 @@ new_data = generate_data(start_id=6, end_id=10)
 
 # Create DataFrame
 df_new = spark.createDataFrame(new_data, schema=schema)
-
-# Path to save the Delta table
-delta_table_path = "/tmp/delta-table"
 
 # Remove existing Delta table if it exists
 if os.path.exists(delta_table_path):
@@ -105,11 +102,11 @@ df_new.write.format("delta").mode("overwrite").save(delta_table_path)
 
 # Read the Delta table and show the records
 LOG.info("Reading and displaying the Delta table...")
-df = spark.read.format("delta").load("/tmp/delta-table")
+df = spark.read.format("delta").load(delta_table_path)
 df.show()
 
 LOG.info("Getting history...")
-deltaTable = DeltaTable.forPath(spark, "/tmp/delta-table")
+deltaTable = DeltaTable.forPath(spark, delta_table_path)
 history = deltaTable.history()
 LOG.info(f"history.count: \n {history.count}")
 # LOG.info(f"history: {history}")
