@@ -24,7 +24,6 @@ builder = pyspark.sql.SparkSession.builder.appName("MyApp") \
 spark = configure_spark_with_delta_pip(builder).getOrCreate()
 
 # Define schema for the table
-# schema = "id INT, transaction_date DATE, amount DECIMAL(10, 2)"
 schema = StructType([
     StructField("id", IntegerType(), False),
     StructField("transaction_date", DateType(), False),
