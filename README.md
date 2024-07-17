@@ -1,0 +1,1 @@
+# practice_delta_table
