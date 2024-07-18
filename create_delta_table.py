@@ -57,29 +57,6 @@ LOG.info("Reading and displaying the Delta table...")
 df = spark.read.format("delta").load(delta_table_path)
 df.orderBy("id").show()
 
-
-LOG.info("Overwrite original Delta table with new data")
-new_data = generate_data(start_id=6, end_id=10)
-
-# Create DataFrame
-df_new = spark.createDataFrame(new_data, schema=schema)
-
-# Remove existing Delta table if it exists
-if os.path.exists(delta_table_path):
-    LOG.info(f"Removing existing Delta table at {delta_table_path}...")
-    spark._jvm.org.apache.hadoop.fs.FileSystem.get(spark._jsc.hadoopConfiguration()).delete(
-        spark._jvm.org.apache.hadoop.fs.Path(delta_table_path), True
-    )
-
-# Save DataFrame as Delta table
-LOG.info("Saving DataFrame with new data as Delta table...")
-df_new.write.format("delta").mode("overwrite").save(delta_table_path)
-
-# Read the Delta table and show the records
-LOG.info("Reading and displaying the Delta table...")
-df = spark.read.format("delta").load(delta_table_path)
-df.orderBy("id").show()
-
 LOG.info("Getting history...")
 deltaTable = DeltaTable.forPath(spark, delta_table_path)
 history = deltaTable.history()
