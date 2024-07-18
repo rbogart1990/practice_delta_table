@@ -39,7 +39,7 @@ deltaTable = DeltaTable.forPath(spark, delta_table_path)
 deltaTable.toDF().orderBy("id").show()
 
 LOG.info("Generating new data to add to Delta table...")
-newData = generate_data(start_id=11, end_id=15)
+newData = generate_data(start_id=6, end_id=10)
 
 # Convert to DataFrame
 newData = spark.createDataFrame(newData, schema=schema)
