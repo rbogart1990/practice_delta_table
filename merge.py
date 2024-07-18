@@ -68,3 +68,6 @@ deltaTable.alias("oldData") \
 
 LOG.info("Showing merged Delta table...")
 deltaTable.toDF().orderBy("id").show()
+
+LOG.info("Displaying history...")
+deltaTable.history().show()

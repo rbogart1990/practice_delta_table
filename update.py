@@ -40,3 +40,6 @@ deltaTable.update(
     set = { "amount": pyspark.sql.functions.expr("amount + 10.0") }
 )
 deltaTable.toDF().orderBy("id").show()
+
+LOG.info("Displaying history...")
+deltaTable.history().show()
