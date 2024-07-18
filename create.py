@@ -33,12 +33,11 @@ schema = StructType([
 delta_table_path = "/tmp/delta-table"
 
 
-LOG.info("Create Spark DataFrame and save as Delta Table")
-# Generate data
+# Create Spark DataFrame and save as Delta Table
 LOG.info("Generating data...")
 data = generate_data(start_id=1, end_id=5)
 
-# Create DataFrame
+LOG.info("Creating Spark DataFrame...")
 df = spark.createDataFrame(data, schema=schema)
 
 # Remove existing Delta table if it exists
@@ -48,11 +47,9 @@ if os.path.exists(delta_table_path):
         spark._jvm.org.apache.hadoop.fs.Path(delta_table_path), True
     )
 
-# Save DataFrame as Delta table
 LOG.info("Saving DataFrame as Delta table...")
 df.write.format("delta").mode("overwrite").save(delta_table_path)
 
-# Read the Delta table and show the records
 LOG.info("Reading and displaying the Delta table...")
 df = spark.read.format("delta").load(delta_table_path)
 df.orderBy("id").show()
@@ -61,6 +58,5 @@ LOG.info("Getting history...")
 deltaTable = DeltaTable.forPath(spark, delta_table_path)
 deltaTable.history().show()
 
-# Stop the Spark session
 LOG.info("Stopping Spark session...")
 spark.stop()
