@@ -1,5 +1,5 @@
 from delta import *
-from delta.tables import *
+from delta.tables import DeltaTable
 import logging
 import os
 import pyspark
@@ -38,8 +38,33 @@ LOG.info("Reading Delta table...")
 deltaTable = DeltaTable.forPath(spark, delta_table_path)
 deltaTable.toDF().orderBy("id").show()
 
-LOG.info("Updating every record by adding $10 to amount column...")
-deltaTable.update(
-    set = { "amount": pyspark.sql.functions.expr("amount + 10.0") }
-)
+LOG.info("Generating new data to add to Delta table...")
+newData = generate_data(start_id=11, end_id=15)
+
+# Convert to DataFrame
+newData = spark.createDataFrame(newData, schema=schema)
+newData.orderBy("id").show()
+
+LOG.info("Upserting (merging) new data...")
+deltaTable.alias("oldData") \
+.merge(
+    newData.alias("newData"),
+    "oldData.id = newData.id") \
+.whenMatchedUpdate(set = \
+    { \
+        "id": pyspark.sql.functions.col("newData.id"),
+        "transaction_date": pyspark.sql.functions.col("newData.transaction_date"),
+        "amount": pyspark.sql.functions.col("newData.amount")
+    }
+) \
+.whenNotMatchedInsert(values = \
+    { \
+        "id": pyspark.sql.functions.col("newData.id"),
+        "transaction_date": pyspark.sql.functions.col("newData.transaction_date"),
+        "amount": pyspark.sql.functions.col("newData.amount")
+    }
+) \
+.execute()
+
+LOG.info("Showing merged Delta table...")
 deltaTable.toDF().orderBy("id").show()
