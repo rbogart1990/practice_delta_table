@@ -55,7 +55,7 @@ df.write.format("delta").mode("overwrite").save(delta_table_path)
 # Read the Delta table and show the records
 LOG.info("Reading and displaying the Delta table...")
 df = spark.read.format("delta").load(delta_table_path)
-df.show()
+df.orderBy("id").show()
 
 
 LOG.info("Overwrite original Delta table with new data")
@@ -78,7 +78,7 @@ df_new.write.format("delta").mode("overwrite").save(delta_table_path)
 # Read the Delta table and show the records
 LOG.info("Reading and displaying the Delta table...")
 df = spark.read.format("delta").load(delta_table_path)
-df.show()
+df.orderBy("id").show()
 
 LOG.info("Getting history...")
 deltaTable = DeltaTable.forPath(spark, delta_table_path)
