@@ -1,5 +1,5 @@
 from delta import *
-from delta.tables import *
+from delta.tables import DeltaTable
 import logging
 import os
 import pyspark
