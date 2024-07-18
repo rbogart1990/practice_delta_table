@@ -3,10 +3,7 @@ from delta.tables import DeltaTable
 import logging
 import os
 import pyspark
-# from pyspark.sql.functions import *
 from pyspark.sql.types import StructType, StructField, IntegerType, DateType, DecimalType
-
-from utils import generate_data
 
 # Set up logging
 logging.basicConfig(
