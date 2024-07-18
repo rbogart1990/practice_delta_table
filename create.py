@@ -59,11 +59,7 @@ df.orderBy("id").show()
 
 LOG.info("Getting history...")
 deltaTable = DeltaTable.forPath(spark, delta_table_path)
-history = deltaTable.history()
-LOG.info(f"history.count: \n {history.count}")
-# LOG.info(f"history: {history}")
-# LOG.info(f"type(history): {type(history)}")
-# history.select("version", "timestamp", "operation", "operationParameters", "userMetadata").display()
+deltaTable.history().show()
 
 # Stop the Spark session
 LOG.info("Stopping Spark session...")
